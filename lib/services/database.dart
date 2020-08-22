@@ -6,15 +6,11 @@ import 'package:amber_store/app/home/models/product.dart';
 import 'package:flutter/cupertino.dart';
 
 abstract class Database {
-  // Future<void> setProduct(Product product);
-  // Future<void> deleteProduct(Product product);
-  // Stream<List<Product>> productsStream();
-  // Stream<Product> productStream({@required String productId});
-   
-   // Single set methpd fpr create and update
+  // Single set methpd fpr create and update
   Future<void> setProduct(Product product);
   //Future<void> createProduct(Map<String , dynamic> productData);
   Stream<List<Product>> productsStream();
+  Future<void> deleteProduct(Product product);
 }
 
 String documentIdFromCurrentDate() => DateTime.now().toIso8601String();
@@ -38,11 +34,13 @@ class FirestoreDatabase implements Database {
   //   );
   // }
 
+  @override
   Future<void> setProduct(Product product) async => await _setData(
         path: APIPath.product(product.id),
         data: product.toMap(),
       );
 
+  @override
   Stream<List<Product>> productsStream() => _collectionStream(
         path: APIPath.products(),
         builder: (data, documentId) => Product.fromMap(
@@ -51,8 +49,15 @@ class FirestoreDatabase implements Database {
         ),
       );
 
+  @override
+  Future<void> deleteProduct(Product product) async =>
+      await _deleteData(path: APIPath.product(product.id));
+
   // add generic setData method
-  Future<void> _setData({String path, Map<String, dynamic> data}) async {
+  Future<void> _setData({
+    @required String path,
+    @required Map<String, dynamic> data,
+  }) async {
     final reference = Firestore.instance.document(path);
     print('$path : $data');
     await reference.setData(data);
@@ -72,5 +77,10 @@ class FirestoreDatabase implements Database {
               ))
           .toList(),
     );
+  }
+
+  Future<void> _deleteData({@required String path}) async {
+    final reference = Firestore.instance.document(path);
+    await reference.delete();
   }
 }

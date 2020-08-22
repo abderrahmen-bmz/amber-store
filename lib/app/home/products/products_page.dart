@@ -1,9 +1,13 @@
+import 'dart:js';
+
 import 'package:amber_store/app/home/models/product.dart';
 import 'package:amber_store/app/home/products/edit_product._page.dart';
 import 'package:amber_store/app/home/products/list_items_builder.dart';
 import 'package:amber_store/app/home/products/product._list_tile.dart';
+import 'package:amber_store/common_widgets/platform_exception_alert_dialog.dart';
 import 'package:amber_store/services/database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class ProductsPage extends StatelessWidget {
@@ -19,6 +23,18 @@ class ProductsPage extends StatelessWidget {
   //     ),
   //   );
   // }
+
+  Future<void> _delete(BuildContext context, Product product) async {
+    try {
+      final database = Provider.of<Database>(context);
+      await database.deleteProduct(product);
+    } on PlatformException catch (e) {
+      PlatformExceptionAlertDialog(
+        title: 'Operation Failed',
+        exception: e,
+      ).show(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,11 +87,19 @@ class ProductsPage extends StatelessWidget {
       builder: (context, snapshot) {
         return ListItemsBuilder(
           snapshot: snapshot,
-          itemBuilder: (context, product) =>
-              ProductListTile(
-                product: product,
-                onTap: () => EditProductPage.show(context, product: product),
-              ),
+          itemBuilder: (context, product) => Dismissible(
+            key: Key('product-${product.id}'),
+            background: Container(
+              color: Colors.red,
+              child: Text("Delete"),
+            ),
+            direction: DismissDirection.endToStart,
+            onDismissed: (direction) => _delete(context, product),
+            child: ProductListTile(
+              product: product,
+              onTap: () => EditProductPage.show(context, product: product),
+            ),
+          ),
           //     Card(
           //   child: Column(
           //     mainAxisSize: MainAxisSize.min,
