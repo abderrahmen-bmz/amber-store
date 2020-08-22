@@ -1,11 +1,17 @@
 import 'package:amber_store/app/home/models/product.dart';
+import 'package:amber_store/services/database.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class EditProductPage extends StatefulWidget {
-  static Future<void> show(BuildContext context) async {
+  EditProductPage({@required this.product});
+  final Product product;
+  static Future<void> show(BuildContext context, {Product product}) async {
     await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => EditProductPage(),
+        builder: (context) => EditProductPage(
+          product: product,
+        ),
       ),
     );
   }
@@ -21,10 +27,21 @@ class _EditProductPageState extends State<EditProductPage> {
   final _imageUrlController = TextEditingController();
   final _imageUrlFocusNode = FocusNode();
 
-  String _title;
+  String _name;
   String _description;
   double _price;
   String _imageUrl;
+
+  @override
+  initState() {
+    super.initState();
+    if (widget.product != null) {
+      _name = widget.product.name;
+      _description = widget.product.description;
+      _price = widget.product.price;
+      _imageUrl = widget.product.imageUrl;
+    }
+  }
 
   bool _validateAndSaveForm() {
     final form = _formKey.currentState;
@@ -36,16 +53,40 @@ class _EditProductPageState extends State<EditProductPage> {
   }
 
   // validate and save and submit to firestore
-  void _submit() {
+  Future<void> _submit() async {
     if (_validateAndSaveForm()) {
-      Product(
-        name: _title,
-        description: _description,
-        price: _price,
-        imageUrl: _imageUrl,
-      );
-      print('object');
+      final database = Provider.of<Database>(context, listen: false);
+      final products = await database.productsStream().first;
+      final allNames = products.map((product) => product.name).toList();
+       if (widget.product != null) {
+         allNames.remove(widget.product.name);
+       }
+      if (allNames.contains(_name)) {
+        // TODO : Build a Platforme Dialog
+        print("PlatformeDialog ");
+      } else {
+        final id = widget.product?.id ?? documentIdFromCurrentDate();
+        final product = Product(
+          id: id,
+          name: _name,
+          description: _description,
+          price: _price,
+          imageUrl: _imageUrl,
+        );
+        await database.setProduct(product);
+        Navigator.of(context).pop();
+      }
     }
+  }
+
+  @override
+  void dispose() {
+    //  _imageUrlFocusNode.removeListener(_updateImageUrl);
+    _priceFocusNode.dispose();
+    _descriptionFocusNode.dispose();
+    _imageUrlFocusNode.dispose();
+    _imageUrlController.dispose();
+    super.dispose();
   }
 
   @override
@@ -54,7 +95,10 @@ class _EditProductPageState extends State<EditProductPage> {
       appBar: AppBar(
         elevation: 2.0,
         centerTitle: true,
-        title: Text("Add product"),
+        title: Text(
+          widget.product == null ? "New product" : "Edit product",
+          style: TextStyle(color: Colors.white),
+        ),
         actions: <Widget>[
           FlatButton(
             onPressed: _submit,
@@ -70,6 +114,10 @@ class _EditProductPageState extends State<EditProductPage> {
       ),
       body: _buildContents(),
       backgroundColor: Colors.grey[200],
+      floatingActionButton: FloatingActionButton(
+        onPressed: _submit,
+        child: Icon(Icons.save,color: Colors.white,),
+      ),
     );
   }
 
@@ -100,12 +148,17 @@ class _EditProductPageState extends State<EditProductPage> {
   List<Widget> _buildFormChildren() {
     return [
       TextFormField(
-        decoration: InputDecoration(labelText: 'Title'),
-        onSaved: (value) => _title = value,
-        textInputAction: TextInputAction.next,
-        validator: (value) => value.isEmpty ? null : 'Please provide a value.',
+        initialValue: _name,
+        decoration: InputDecoration(labelText: 'Name'),
+        onSaved: (value) => _name = value,
+        // textInputAction: TextInputAction.next,
+        //  onFieldSubmitted: (_) {
+        //           FocusScope.of(context).requestFocus(_priceFocusNode);
+        //         },
+        validator: (value) => value.isEmpty ? 'Please provide a value.' : null,
       ),
       TextFormField(
+        initialValue:_price != null ? '$_price' : null  ,
         decoration: InputDecoration(labelText: 'Price'),
         textInputAction: TextInputAction.next,
         validator: (value) {
@@ -124,9 +177,10 @@ class _EditProductPageState extends State<EditProductPage> {
         },
         onSaved: (value) => _price = int.tryParse(value) ?? 0,
         keyboardType:
-            TextInputType.numberWithOptions(signed: false, decimal: false),
+            TextInputType.numberWithOptions(),
       ),
       TextFormField(
+        initialValue: _description,
         decoration: InputDecoration(labelText: 'Description'),
         maxLines: 3,
         textInputAction: TextInputAction.next,
@@ -134,7 +188,7 @@ class _EditProductPageState extends State<EditProductPage> {
           if (value.isEmpty) {
             return 'Please entre a description';
           }
-          if (value.length < 10) {
+          if (value.length < 5) {
             return 'Please entre a description';
           }
           return null;
@@ -160,23 +214,24 @@ class _EditProductPageState extends State<EditProductPage> {
           ),
           Expanded(
             child: TextFormField(
+                initialValue: _imageUrl,
                 decoration: InputDecoration(labelText: 'Image URL'),
                 keyboardType: TextInputType.url,
                 textInputAction: TextInputAction.done,
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return 'Please enter an image URL.';
-                  }
-                  if (!value.startsWith('http') && !value.startsWith('https')) {
-                    return 'Please enter a valid URL.';
-                  }
-                  if (!value.endsWith('.png') &&
-                      !value.endsWith('.jpg') &&
-                      !value.endsWith('.jpeg')) {
-                    return 'Please enter a valid image URL.';
-                  }
-                  return null;
-                },
+                // validator: (value) {
+                //   if (value.isEmpty) {
+                //     return 'Please enter an image URL.';
+                //   }
+                //   if (!value.startsWith('http') && !value.startsWith('https')) {
+                //     return 'Please enter a valid URL.';
+                //   }
+                //   if (!value.endsWith('.png') &&
+                //       !value.endsWith('.jpg') &&
+                //       !value.endsWith('.jpeg')) {
+                //     return 'Please enter a valid image URL.';
+                //   }
+                //   return null;
+                // },
                 onSaved: (value) => _imageUrl = value),
           ),
         ],

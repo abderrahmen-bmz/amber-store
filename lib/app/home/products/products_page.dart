@@ -1,29 +1,21 @@
+import 'package:amber_store/app/home/models/product.dart';
+import 'package:amber_store/app/home/products/edit_product._page.dart';
+import 'package:amber_store/app/home/products/product._list_tile.dart';
 import 'package:amber_store/services/database.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ProductsPage extends StatelessWidget {
-  Future<void> _createProduct(BuildContext context) async {
-    final database = Provider.of<Database>(context);
-    await database.createProduct(
-      {
-        'name': 'Blogging',
-        'reteHour': 10,
-      },
-    );
-    print("its Done ??? ==========");
-  }
-
-  // int id = 0202;
-  // Future<void> createProduct() async {
-  //   final path = '/products/$id/new_product';
-  //   final documentReference = Fire.instance.doc(path);
-  //   await documentReference.set(
-  //     {
-  //       'name': 'Blogging',
-  //       'reteHour': 10,
-  //     },
+  // Future<void> _createProduct(BuildContext context) async {
+  //   final database = Provider.of<Database>(context, listen: false);
+  //   await database.setProduct(
+  //     Product(
+  //       id: ,
+  //       name: 'YesMan',
+  //       description: 'Nice Product',
+  //       price: 120.00,
+  //       imageUrl: 'http//www.googleurl.com',
+  //     ),
   //   );
   // }
 
@@ -56,11 +48,47 @@ class ProductsPage extends StatelessWidget {
               Icons.shopping_cart,
               color: Colors.white,
             ),
-            onPressed: () => _createProduct(context),
+            onPressed: () {},
           ),
         ],
       ),
-     
+      body: _buildContents(context),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
+        onPressed: () => EditProductPage.show(context),
+      ),
+    );
+  }
+
+  Widget _buildContents(context) {
+    final database = Provider.of<Database>(context);
+    return StreamBuilder<List<Product>>(
+      stream: database.productsStream(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final products = snapshot.data;
+          final children = products
+              .map((product) => ProductListTile(
+                    product: product,
+                    onTap: () => EditProductPage.show(context,product: product),
+                  ))
+              .toList();
+          return ListView(
+            children: children,
+          );
+        }
+        if (snapshot.hasError) {
+          return Center(
+            child: Text('Some Error occurred '),
+          );
+        }
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
     );
   }
 }

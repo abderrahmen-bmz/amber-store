@@ -1,60 +1,76 @@
 import 'dart:async';
 
+import 'package:amber_store/services/api_path.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:meta/meta.dart';
 import 'package:amber_store/app/home/models/product.dart';
+import 'package:flutter/cupertino.dart';
 
 abstract class Database {
+  // Future<void> setProduct(Product product);
+  // Future<void> deleteProduct(Product product);
+  // Stream<List<Product>> productsStream();
+  // Stream<Product> productStream({@required String productId});
+   
+   // Single set methpd fpr create and update
   Future<void> setProduct(Product product);
-  Future<void> deleteProduct(Product product);
+  //Future<void> createProduct(Map<String , dynamic> productData);
   Stream<List<Product>> productsStream();
-  Stream<Product> productStream({@required String productId});
-
-  Future<void> createProduct(Map<String, dynamic> productData);
 }
+
+String documentIdFromCurrentDate() => DateTime.now().toIso8601String();
 
 // add Provider to Product page
 class FirestoreDatabase implements Database {
-  // FirestoreDatabase({@required this.pid}) : assert(pid != null);
-  // final String pid; // pid
+  // Future<void> createProduct(Map<String, dynamic> productData) async {
+  //   final path = '/products/google101';//APIPath.product("productId");
+  //   final documentReference = Firestore.instance.document(path);
+  //   await documentReference.setData(productData);
+  // }
 
-  int id = 0202;
-  Future<void> createProduct(Map<String, dynamic> productData) async {
-    final path = '/products/$id/new_product';
-    final documentReference = Firestore.instance.document(path);
-    await documentReference.setData(productData);
+  // Stream<List<Product>> productsStream() {
+  //   final path = APIPath.products();
+  //   final reference = Firestore.instance.collection(path);
+  //   final snapshots = reference.snapshots();
+  //   return snapshots.map(
+  //     (snapshot) => snapshot.documents
+  //         .map((snapshot) => Product.fromMap(snapshot.data))
+  //         .toList(),
+  //   );
+  // }
+
+  Future<void> setProduct(Product product) async => await _setData(
+        path: APIPath.product(product.id),
+        data: product.toMap(),
+      );
+
+  Stream<List<Product>> productsStream() => _collectionStream(
+        path: APIPath.products(),
+        builder: (data, documentId) => Product.fromMap(
+          data,
+          documentId,
+        ),
+      );
+
+  // add generic setData method
+  Future<void> _setData({String path, Map<String, dynamic> data}) async {
+    final reference = Firestore.instance.document(path);
+    print('$path : $data');
+    await reference.setData(data);
   }
 
-
-
-
-  Future<void> createJob0(Product product) async {
-    final path = '/products/new_product';
-    final documentReference = Firestore.instance.document(path);
-    await documentReference.setData(product.toMap());
-  }
-
-  @override
-  Future<void> deleteProduct(Product product) {
-    // TODO: implement deleteProduct
-    throw UnimplementedError();
-  }
-
-  @override
-  Stream<Product> productStream({String productId}) {
-    // TODO: implement jobStream
-    throw UnimplementedError();
-  }
-
-  @override
-  Stream<List<Product>> productsStream() {
-    // TODO: implement productsStream
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> setProduct(Product product) {
-    // TODO: implement setProduct
-    throw UnimplementedError();
+  Stream<List<T>> _collectionStream<T>({
+    @required String path,
+    @required T builder(Map<String, dynamic> data, String documentId),
+  }) {
+    final reference = Firestore.instance.collection(path);
+    final snapshots = reference.snapshots();
+    return snapshots.map(
+      (snapshot) => snapshot.documents
+          .map((snapshot) => builder(
+                snapshot.data,
+                snapshot.documentID,
+              ))
+          .toList(),
+    );
   }
 }
