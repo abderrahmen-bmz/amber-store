@@ -25,7 +25,11 @@ class HomePage extends StatelessWidget {
         ),
       ],
       ),
-      body: Container(),
+      body: Center(
+        child: Container(
+          child: Text('Home Page ? '),
+        ),
+      ),
     );
   }
 }

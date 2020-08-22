@@ -1,5 +1,6 @@
 import 'package:amber_store/app/home/models/product.dart';
 import 'package:amber_store/app/home/products/edit_product._page.dart';
+import 'package:amber_store/app/home/products/list_items_builder.dart';
 import 'package:amber_store/app/home/products/product._list_tile.dart';
 import 'package:amber_store/services/database.dart';
 import 'package:flutter/material.dart';
@@ -68,26 +69,64 @@ class ProductsPage extends StatelessWidget {
     return StreamBuilder<List<Product>>(
       stream: database.productsStream(),
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final products = snapshot.data;
-          final children = products
-              .map((product) => ProductListTile(
-                    product: product,
-                    onTap: () => EditProductPage.show(context,product: product),
-                  ))
-              .toList();
-          return ListView(
-            children: children,
-          );
-        }
-        if (snapshot.hasError) {
-          return Center(
-            child: Text('Some Error occurred '),
-          );
-        }
-        return Center(
-          child: CircularProgressIndicator(),
+        return ListItemsBuilder(
+          snapshot: snapshot,
+          itemBuilder: (context, product) =>
+              ProductListTile(
+                product: product,
+                onTap: () => EditProductPage.show(context, product: product),
+              ),
+          //     Card(
+          //   child: Column(
+          //     mainAxisSize: MainAxisSize.min,
+          //     children: [
+          //       ListTile(
+          //         leading: CircleAvatar(
+          //           child: Icon(Icons.album),
+          //         ),
+          //         title: Text('The Enchanted Nightingale'),
+          //         subtitle: Text('Music by Julie Gable'),
+          //       ),
+          //       ButtonBar(children: <Widget>[
+          //         IconButton(
+          //           icon: Icon(
+          //             Icons.shopping_cart,
+          //             color: Colors.amber,
+          //           ),
+          //           onPressed: null,
+          //         ),
+          //         IconButton(
+          //           icon: Icon(
+          //             Icons.favorite,
+          //             color: Colors.amber,
+          //           ),
+          //           onPressed: null,
+          //         ),
+          //       ])
+          //     ],
+          //   ),
+          // ),
         );
+        //   if (snapshot.hasData) {
+        //     final products = snapshot.data;
+        //     final children = products
+        //         .map((product) => ProductListTile(
+        //               product: product,
+        //               onTap: () => EditProductPage.show(context,product: product),
+        //             ))
+        //         .toList();
+        //     return ListView(
+        //       children: children,
+        //     );
+        //   }
+        //   if (snapshot.hasError) {
+        //     return Center(
+        //       child: Text('Some Error occurred '),
+        //     );
+        //   }
+        //   return Center(
+        //     child: CircularProgressIndicator(),
+        //   );
       },
     );
   }
