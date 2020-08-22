@@ -1,6 +1,9 @@
 import 'package:amber_store/app/home/models/product.dart';
+import 'package:amber_store/common_widgets/platform_alert_dialog.dart';
+import 'package:amber_store/common_widgets/platform_exception_alert_dialog.dart';
 import 'package:amber_store/services/database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class EditProductPage extends StatefulWidget {
@@ -55,26 +58,36 @@ class _EditProductPageState extends State<EditProductPage> {
   // validate and save and submit to firestore
   Future<void> _submit() async {
     if (_validateAndSaveForm()) {
-      final database = Provider.of<Database>(context, listen: false);
-      final products = await database.productsStream().first;
-      final allNames = products.map((product) => product.name).toList();
-       if (widget.product != null) {
-         allNames.remove(widget.product.name);
-       }
-      if (allNames.contains(_name)) {
-        // TODO : Build a Platforme Dialog
-        print("PlatformeDialog ");
-      } else {
-        final id = widget.product?.id ?? documentIdFromCurrentDate();
-        final product = Product(
-          id: id,
-          name: _name,
-          description: _description,
-          price: _price,
-          imageUrl: _imageUrl,
-        );
-        await database.setProduct(product);
-        Navigator.of(context).pop();
+      try {
+        final database = Provider.of<Database>(context, listen: false);
+        final products = await database.productsStream().first;
+        final allNames = products.map((product) => product.name).toList();
+        if (widget.product != null) {
+          allNames.remove(widget.product.name);
+        }
+        if (allNames.contains(_name)) {
+          PlatformAlertDialog(
+            title: 'Name already used',
+            content: 'Please choose a different product name',
+            defaultActionText: 'OK',
+          ).show(context);
+        } else {
+          final id = widget.product?.id ?? documentIdFromCurrentDate();
+          final product = Product(
+            id: id,
+            name: _name,
+            description: _description,
+            price: _price,
+            imageUrl: _imageUrl,
+          );
+          await database.setProduct(product);
+          Navigator.of(context).pop();
+        }
+      } on PlatformException catch (e) {
+        PlatformExceptionAlertDialog(
+          title: 'Operation failed',
+          exception: e,
+        ).show(context);
       }
     }
   }
@@ -116,7 +129,10 @@ class _EditProductPageState extends State<EditProductPage> {
       backgroundColor: Colors.grey[200],
       floatingActionButton: FloatingActionButton(
         onPressed: _submit,
-        child: Icon(Icons.save,color: Colors.white,),
+        child: Icon(
+          Icons.save,
+          color: Colors.white,
+        ),
       ),
     );
   }
@@ -158,7 +174,7 @@ class _EditProductPageState extends State<EditProductPage> {
         validator: (value) => value.isEmpty ? 'Please provide a value.' : null,
       ),
       TextFormField(
-        initialValue:_price != null ? '$_price' : null  ,
+        initialValue: _price != null ? '$_price' : null,
         decoration: InputDecoration(labelText: 'Price'),
         textInputAction: TextInputAction.next,
         validator: (value) {
@@ -175,9 +191,8 @@ class _EditProductPageState extends State<EditProductPage> {
           }
           return null;
         },
-        onSaved: (value) => _price = int.tryParse(value) ?? 0,
-        keyboardType:
-            TextInputType.numberWithOptions(),
+        onSaved: (value) => _price = double.tryParse(value) ?? 0,
+        keyboardType: TextInputType.numberWithOptions(),
       ),
       TextFormField(
         initialValue: _description,

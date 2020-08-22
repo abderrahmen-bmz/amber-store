@@ -14,9 +14,9 @@ class ProductListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-     title: Text(product.name),
-     trailing: Icon(Icons.chevron_right),
-     onTap: onTap,
+      title: Text(product.name),
+      trailing: Icon(Icons.edit,color: Colors.green,),
+      onTap: onTap,
     );
   }
 }
