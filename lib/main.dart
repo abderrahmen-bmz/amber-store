@@ -1,3 +1,5 @@
+import 'package:amber_store/app/home/home_page.dart';
+import 'package:amber_store/app/home/products/product_detail_page.dart';
 import 'package:amber_store/app/home/products/products_page.dart';
 import 'package:amber_store/services/database.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +24,11 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.amber,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: ProductsPage(),
+        home: HomePage(),
+        routes: {
+        ProductsPage.routeName : (ctx) => ProductsPage(),
+        ProductDetailPage.routeName  : (ctw) => ProductDetailPage(),
+        },
       ),
     );
   }

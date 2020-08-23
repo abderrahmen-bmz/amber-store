@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:amber_store/services/api_path.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:amber_store/app/home/models/product.dart';
@@ -81,6 +80,7 @@ class FirestoreDatabase implements Database {
 
   Future<void> _deleteData({@required String path}) async {
     final reference = Firestore.instance.document(path);
+    print('this path hasbeen delete : $path');
     await reference.delete();
   }
 }

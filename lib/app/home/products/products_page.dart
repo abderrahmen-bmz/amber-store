@@ -1,5 +1,3 @@
-import 'dart:js';
-
 import 'package:amber_store/app/home/models/product.dart';
 import 'package:amber_store/app/home/products/edit_product._page.dart';
 import 'package:amber_store/app/home/products/list_items_builder.dart';
@@ -11,6 +9,8 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class ProductsPage extends StatelessWidget {
+
+  static const routeName = '/products-page';
   // Future<void> _createProduct(BuildContext context) async {
   //   final database = Provider.of<Database>(context, listen: false);
   //   await database.setProduct(
@@ -24,9 +24,9 @@ class ProductsPage extends StatelessWidget {
   //   );
   // }
 
-  Future<void> _delete(BuildContext context, Product product) async {
+  Future<void> _deleteProduct(BuildContext context, Product product) async {
     try {
-      final database = Provider.of<Database>(context);
+      final database = Provider.of<Database>(context, listen: false);
       await database.deleteProduct(product);
     } on PlatformException catch (e) {
       PlatformExceptionAlertDialog(
@@ -87,50 +87,67 @@ class ProductsPage extends StatelessWidget {
       builder: (context, snapshot) {
         return ListItemsBuilder(
           snapshot: snapshot,
-          itemBuilder: (context, product) => Dismissible(
-            key: Key('product-${product.id}'),
-            background: Container(
-              color: Colors.red,
-              child: Text("Delete"),
-            ),
-            direction: DismissDirection.endToStart,
-            onDismissed: (direction) => _delete(context, product),
-            child: ProductListTile(
-              product: product,
-              onTap: () => EditProductPage.show(context, product: product),
+          itemBuilder: (context, product) =>
+              //  Dismissible(
+              //   key: Key('product-${product.id}'),
+              //   background: Container(
+              //     color: Colors.red,
+              //     child: Text("Delete",style: TextStyle(color:Colors.white,fontSize: 25.00,),),
+              //   ),
+              //   direction: DismissDirection.endToStart,
+              //   onDismissed: (direction) => _deleteProduct(context, product),
+              //   child: ProductListTile(
+              //     product: product,
+              //     onTap: () => EditProductPage.show(context, product: product),
+              //   ),
+              // ),
+              //**************************************** */
+              Card(
+            child: Row(
+              children: [
+                Container(
+                  color: Colors.grey,
+                  width: 100.0,
+                  height: 100.0,
+                ),
+                SizedBox(
+                  width: 10.0,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      product.name,
+                      style: TextStyle(fontSize: 20.0),
+                    ),
+                    Text(product.price.toString(),
+                        style: TextStyle(
+                          color: Colors.grey[450],
+                        )),
+                    ButtonBar(children: <Widget>[
+                      IconButton(
+                        icon: Icon(
+                          Icons.shopping_cart,
+                          color: Colors.amber,
+                        ),
+                        onPressed: null,
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          Icons.favorite,
+                          color: Colors.amber,
+                        ),
+                        onPressed: null,
+                      ),
+                    ])
+                  ],
+                ),
+              ],
             ),
           ),
-          //     Card(
-          //   child: Column(
-          //     mainAxisSize: MainAxisSize.min,
-          //     children: [
-          //       ListTile(
-          //         leading: CircleAvatar(
-          //           child: Icon(Icons.album),
-          //         ),
-          //         title: Text('The Enchanted Nightingale'),
-          //         subtitle: Text('Music by Julie Gable'),
-          //       ),
-          //       ButtonBar(children: <Widget>[
-          //         IconButton(
-          //           icon: Icon(
-          //             Icons.shopping_cart,
-          //             color: Colors.amber,
-          //           ),
-          //           onPressed: null,
-          //         ),
-          //         IconButton(
-          //           icon: Icon(
-          //             Icons.favorite,
-          //             color: Colors.amber,
-          //           ),
-          //           onPressed: null,
-          //         ),
-          //       ])
-          //     ],
-          //   ),
-          // ),
         );
+
+        //**************************************** */
         //   if (snapshot.hasData) {
         //     final products = snapshot.data;
         //     final children = products

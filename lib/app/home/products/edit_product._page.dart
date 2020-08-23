@@ -7,6 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class EditProductPage extends StatefulWidget {
+
+  static const routeName = '/edit-product';
   EditProductPage({@required this.product});
   final Product product;
   static Future<void> show(BuildContext context, {Product product}) async {
