@@ -10,6 +10,7 @@ abstract class Database {
   //Future<void> createProduct(Map<String , dynamic> productData);
   Stream<List<Product>> productsStream();
   Future<void> deleteProduct(Product product);
+  Stream<Product> findProductById(String productId);
 }
 
 String documentIdFromCurrentDate() => DateTime.now().toIso8601String();
@@ -52,6 +53,16 @@ class FirestoreDatabase implements Database {
   Future<void> deleteProduct(Product product) async =>
       await _deleteData(path: APIPath.product(product.id));
 
+//  @override
+//   Stream<List<Entry>> entriesStream({Product product}) =>
+//       _collectionStream<Product>(
+//         path: APIPath.product(('')),
+//         queryBuilder: product != null
+//             ? (query) => query.where('jobId', isEqualTo: product.id)
+//             : null,
+//         builder: (data, documentID) => Product.fromMap(data, documentID),
+//         sort: (lhs, rhs) => rhs.start.compareTo(lhs.start),
+//       );
   // add generic setData method
   Future<void> _setData({
     @required String path,
@@ -82,5 +93,33 @@ class FirestoreDatabase implements Database {
     final reference = Firestore.instance.document(path);
     print('this path hasbeen delete : $path');
     await reference.delete();
+  }
+
+  /// Test Code
+  ///
+  @override
+  Stream<Product> findProductById(String productId) {
+    // final DocumentReference reference = Firestore.instance.document(APIPath.product(productId));
+    // final Stream<DocumentSnapshot> snapshots = reference.snapshots();
+    // return snapshots.map(
+    //   (snapshot) => Product.fromMap(snapshot.data, snapshot.documentID),
+    // );
+
+     return _documentStream<Product>(
+        path: APIPath.product(productId),
+        builder: (data, documentID) => Product.fromMap(data, documentID),
+      );
+ 
+  }
+
+
+  Stream<T> _documentStream<T>({
+    @required String path,
+    @required T builder(Map<String, dynamic> data, String documentID),
+  }) {
+    final DocumentReference reference = Firestore.instance.document(path);
+    final Stream<DocumentSnapshot> snapshots = reference.snapshots();
+    return snapshots
+        .map((snapshot) => builder(snapshot.data, snapshot.documentID));
   }
 }
