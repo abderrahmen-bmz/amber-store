@@ -53,16 +53,6 @@ class FirestoreDatabase implements Database {
   Future<void> deleteProduct(Product product) async =>
       await _deleteData(path: APIPath.product(product.id));
 
-//  @override
-//   Stream<List<Entry>> entriesStream({Product product}) =>
-//       _collectionStream<Product>(
-//         path: APIPath.product(('')),
-//         queryBuilder: product != null
-//             ? (query) => query.where('jobId', isEqualTo: product.id)
-//             : null,
-//         builder: (data, documentID) => Product.fromMap(data, documentID),
-//         sort: (lhs, rhs) => rhs.start.compareTo(lhs.start),
-//       );
   // add generic setData method
   Future<void> _setData({
     @required String path,

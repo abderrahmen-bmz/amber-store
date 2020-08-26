@@ -12,7 +12,7 @@ class EditProductPage extends StatefulWidget {
   EditProductPage({@required this.product});
   final Product product;
   static Future<void> show(BuildContext context, {Product product}) async {
-    await Navigator.of(context).push(
+    await Navigator.of(context ,rootNavigator: true).push(
       MaterialPageRoute(
         builder: (context) => EditProductPage(
           product: product,

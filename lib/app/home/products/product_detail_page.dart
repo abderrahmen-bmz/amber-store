@@ -13,6 +13,7 @@ class ProductDetailPage extends StatelessWidget {
     final loadedProduct = Provider.of<Database>(context, listen: false);
 
     return Scaffold(
+      backgroundColor: Colors.grey[300],
       body: Center(
         child: Container(
           child: StreamBuilder(
@@ -23,52 +24,104 @@ class ProductDetailPage extends StatelessWidget {
                 }
                 var productDocument = snapshot.data;
 
-                return  Card(
+                return SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 18.0, vertical: 25.0),
                     child: Column(
-                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).pushNamed(
-                              ProductDetailPage.routeName,
-                              arguments: productDocument.id,
-                            );
-                          },
-                          child: Container(
+                        Container(
+                          //  color: Colors.grey,
+                          width: 400.0,
+                          height: 400.0,
+                          // height: MediaQuery.of(context).size.height,
+                          // width: MediaQuery.of(context).size.width,
+                          decoration: BoxDecoration(
+                            //   image: Image.network(productDocument.imageUrl,),
+                            image: DecorationImage(
+                                image: NetworkImage(productDocument.imageUrl),
+                                fit: BoxFit.cover),
                             color: Colors.grey,
-                           // width: 100.0,
-                            height: 100.0,
-                            child: Image.network(
-                              productDocument.imageUrl,
-                              fit: BoxFit.cover,
-                            ),
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
                           ),
                         ),
-                        const ListTile(
-                          leading: Icon(Icons.album),
-                          title: Text('The Enchanted Nightingale'),
-                          subtitle: Text(
-                              'Music by Julie Gable. Lyrics by Sidney Stein.'),
+                        SizedBox(
+                          height: 12.0,
                         ),
-                        ButtonBar(children: <Widget>[
-                          IconButton(
-                            icon: Icon(
-                              Icons.shopping_cart,
-                              color: Colors.amber,
-                            ),
-                            onPressed: null,
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10)),
                           ),
-                          IconButton(
-                            icon: Icon(
-                              Icons.favorite,
-                              color: Colors.amber,
-                            ),
-                            onPressed: null,
+                          child: ListTile(
+                            title: Text(productDocument.name),
+                            subtitle: Text(productDocument.description),
+                            trailing: Text(productDocument.price.toString()),
                           ),
-                        ])
+                        ),
+                        ButtonBar(
+                          children: <Widget>[
+                            Container(
+                              width: 150.0,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)),
+                              ),
+                              child: Row(
+                                children: [
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.favorite_border,
+                                      color: Colors.grey,
+                                    ),
+                                    onPressed: null,
+                                  ),
+                                  Text(
+                                    'Add to Wishlist',
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Container(
+                              width: 150.0,
+                              decoration: BoxDecoration(
+                                color: Colors.amber,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)),
+                              ),
+                              child: Row(
+                                children: [
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.add_shopping_cart,
+                                      color: Colors.white,
+                                    ),
+                                    onPressed: (){
+                                    // final database = Provider.of<Database>(context);
+                                    // database.setProduct(productDocument.name = '');
+                                    },
+                                  ),
+                                  Text(
+                                    'Add to Cart',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
+                        )
                       ],
                     ),
-                  );
+                  ),
+                );
               }),
         ),
       ),
