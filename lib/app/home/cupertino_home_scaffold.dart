@@ -1,4 +1,3 @@
-import 'dart:js';
 
 import 'package:amber_store/app/home/products/products_page.dart';
 import 'package:amber_store/app/home/tab_item.dart';
