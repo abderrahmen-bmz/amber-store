@@ -7,7 +7,7 @@ class Product {
     @required this.description,
     @required this.price,
     @required this.imageUrl,
-    this.isFavorite,
+    this.isFavorite = false,
   });
 
   final String id;
@@ -28,6 +28,7 @@ class Product {
       'description': description,
       'price': price,
       'imageUrl': imageUrl,
+      'isFavorite': isFavorite,
     };
   }
 
@@ -39,12 +40,14 @@ class Product {
     final String description = data['description'];
     final double price = data['price'];
     final String imageUrl = data['imageUrl'];
+    final bool isFavorite = data['isFavorite'];
     return Product(
-      id: documentId,
-      name: name,
-      description: description,
-      price: price,
-      imageUrl: imageUrl,
+      id: documentId ?? '',
+      name: name ?? '',
+      description: description ?? '',
+      price: price ?? '',
+      imageUrl: imageUrl ?? '',
+      isFavorite: isFavorite ?? '',
     );
   }
 }

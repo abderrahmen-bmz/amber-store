@@ -1,6 +1,9 @@
 
+import 'package:amber_store/app/home/cart/cart_page.dart';
+import 'package:amber_store/app/home/products/all_products_page.dart';
 import 'package:amber_store/app/home/products/products_page.dart';
 import 'package:amber_store/app/home/tab_item.dart';
+import 'package:amber_store/app/sign_in/sign_in_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -18,9 +21,9 @@ class CupertinoHomeScaffold extends StatelessWidget {
 
   Map<TabItem, WidgetBuilder> get widgetBuilders {
     return {
-      TabItem.prodcuts: (_) => ProductsPage(),
-      TabItem.favourites: (_) => Container(),
-      TabItem.account: (_) => Container(),
+      TabItem.prodcuts: (_) => SignInPage(),
+      TabItem.favourites: (_) => AllProdcuts(),
+      TabItem.account: (_) => CartPage(),
     };
   }
 

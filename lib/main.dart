@@ -1,5 +1,10 @@
 // import 'package:amber_store/app/home/home_page.dart';
+
+import 'package:amber_store/app/home/cart/cart_page.dart';
 import 'package:amber_store/app/home/home_page.dart';
+import 'package:amber_store/app/home/models/cart.dart';
+import 'package:amber_store/app/home/products/all_products_page.dart';
+import 'package:amber_store/app/home/products/edit_product._page.dart';
 import 'package:amber_store/app/home/products/product_detail_page.dart';
 import 'package:amber_store/app/home/products/products_page.dart';
 import 'package:amber_store/app/sign_in/sign_in_page.dart';
@@ -24,6 +29,9 @@ class MyApp extends StatelessWidget {
           Provider<AuthBase>(
             create: (_) => Auth(),
           ),
+          ChangeNotifierProvider.value(
+            value: Cart(),
+          ),
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
@@ -32,10 +40,11 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.amber,
             visualDensity: VisualDensity.adaptivePlatformDensity,
           ),
-          home: SignInPage(),
+          home: HomePage(),
           routes: {
             ProductsPage.routeName: (ctx) => ProductsPage(),
             ProductDetailPage.routeName: (ctx) => ProductDetailPage(),
+            CartPage.routeName: (ctx) => CartPage(),
           },
         ));
   }

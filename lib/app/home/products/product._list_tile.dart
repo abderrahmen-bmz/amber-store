@@ -13,13 +13,17 @@ class ProductListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(product.name),
-      trailing: Icon(
-        Icons.edit,
-        color: Colors.green,
+    return Card(
+      child: ListTile(
+        leading: Image.network(product.imageUrl),
+        title: Text(product.name),
+        subtitle: Text(product.description),
+        trailing: Icon(
+          Icons.edit,
+          color: Colors.green,
+        ),
+        onTap: onTap,
       ),
-      onTap: onTap,
     );
   }
 }

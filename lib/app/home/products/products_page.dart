@@ -49,7 +49,7 @@ class ProductsPage extends StatelessWidget {
         ),
         centerTitle: true,
         title: Text(
-          'Amber Store',
+          'My Products',
           style: TextStyle(color: Colors.white),
         ),
         actions: [
@@ -88,86 +88,66 @@ class ProductsPage extends StatelessWidget {
         return ListItemsBuilder(
           snapshot: snapshot,
           itemBuilder: (context, product) =>
-              //  Dismissible(
-              //   key: Key('product-${product.id}'),
-              //   background: Container(
-              //     color: Colors.red,
-              //     child: Text("Delete",style: TextStyle(color:Colors.white,fontSize: 25.00,),),
-              //   ),
-              //   direction: DismissDirection.endToStart,
-              //   onDismissed: (direction) => _deleteProduct(context, product),
-              //   child: ProductListTile(
-              //     product: product,
-              //     onTap: () => EditProductPage.show(context, product: product),
-              //   ),
-              // ),
+               Dismissible(
+                key: Key('product-${product.id}'),
+                background: Container(
+                  color: Colors.red,
+                  child: Text("Delete",style: TextStyle(color:Colors.white,fontSize: 25.00,),),
+                ),
+                direction: DismissDirection.endToStart,
+                onDismissed: (direction) => _deleteProduct(context, product),
+                child: ProductListTile(
+                  product: product,
+                  onTap: () => EditProductPage.show(context, product: product),
+                ),
+              ),
               //**************************************** */
-              Card(
-            child: Row(
-              children: [
-                Container(
-                  color: Colors.grey,
-                  width: 100.0,
-                  height: 100.0,
-                ),
-                SizedBox(
-                  width: 10.0,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      product.name,
-                      style: TextStyle(fontSize: 20.0),
-                    ),
-                    Text(product.price.toString(),
-                        style: TextStyle(
-                          color: Colors.grey[450],
-                        )),
-                    ButtonBar(children: <Widget>[
-                      IconButton(
-                        icon: Icon(
-                          Icons.shopping_cart,
-                          color: Colors.amber,
-                        ),
-                        onPressed: null,
-                      ),
-                      IconButton(
-                        icon: Icon(
-                          Icons.favorite,
-                          color: Colors.amber,
-                        ),
-                        onPressed: null,
-                      ),
-                    ])
-                  ],
-                ),
-              ],
-            ),
-          ),
+          //     Card(
+          //   child: Row(
+          //     children: [
+          //       Container(
+          //         color: Colors.grey,
+          //         width: 100.0,
+          //         height: 100.0,
+          //       ),
+          //       SizedBox(
+          //         width: 10.0,
+          //       ),
+          //       Column(
+          //         crossAxisAlignment: CrossAxisAlignment.start,
+          //         children: [
+          //           Text(
+          //             product.name,
+          //             style: TextStyle(fontSize: 20.0),
+          //           ),
+          //           Text(product.price.toString(),
+          //               style: TextStyle(
+          //                 color: Colors.grey[450],
+          //               )),
+          //           ButtonBar(children: <Widget>[
+          //             IconButton(
+          //               icon: Icon(
+          //                 Icons.shopping_cart,
+          //                 color: Colors.amber,
+          //               ),
+          //               onPressed: null,
+          //             ),
+          //             IconButton(
+          //               icon: Icon(
+          //                 Icons.favorite,
+          //                 color: Colors.amber,
+          //               ),
+          //               onPressed: null,
+          //             ),
+          //           ])
+          //         ],
+          //       ),
+          //     ],
+          //   ),
+          // ),
         );
 
-        //**************************************** */
-        //   if (snapshot.hasData) {
-        //     final products = snapshot.data;
-        //     final children = products
-        //         .map((product) => ProductListTile(
-        //               product: product,
-        //               onTap: () => EditProductPage.show(context,product: product),
-        //             ))
-        //         .toList();
-        //     return ListView(
-        //       children: children,
-        //     );
-        //   }
-        //   if (snapshot.hasError) {
-        //     return Center(
-        //       child: Text('Some Error occurred '),
-        //     );
-        //   }
-        //   return Center(
-        //     child: CircularProgressIndicator(),
-        //   );
+     
       },
     );
   }
