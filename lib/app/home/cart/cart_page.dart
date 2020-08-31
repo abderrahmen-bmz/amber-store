@@ -1,5 +1,7 @@
 import 'package:amber_store/app/home/cart/cart_item_list_tile.dart';
 import 'package:amber_store/app/home/models/cart.dart';
+import 'package:amber_store/app/home/models/orders.dart';
+import 'package:amber_store/common_widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -11,6 +13,7 @@ class CartPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Your Cart'),
       ),
+      drawer: AppDrawer(),
       body: _buildContent(context),
     );
   }
@@ -35,8 +38,14 @@ class CartPage extends StatelessWidget {
                 backgroundColor: Theme.of(context).accentColor,
               ),
               FlatButton(
-                onPressed: () {},
                 child: Text('ORDER NOW'),
+                onPressed: () {
+                  Provider.of<Orders>(context,listen: false).addOrder(
+                    cart.items.values.toList(),
+                    cart.totalAmount,
+                  );
+                  cart.clear();
+                },
               ),
             ],
           ),

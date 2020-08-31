@@ -3,6 +3,8 @@
 import 'package:amber_store/app/home/cart/cart_page.dart';
 import 'package:amber_store/app/home/home_page.dart';
 import 'package:amber_store/app/home/models/cart.dart';
+import 'package:amber_store/app/home/models/orders.dart';
+import 'package:amber_store/app/home/orders/orders_page.dart';
 import 'package:amber_store/app/home/products/all_products_page.dart';
 import 'package:amber_store/app/home/products/edit_product._page.dart';
 import 'package:amber_store/app/home/products/product_detail_page.dart';
@@ -32,6 +34,9 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider.value(
             value: Cart(),
           ),
+          ChangeNotifierProvider.value(
+            value: Orders(),
+          ),
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
@@ -45,6 +50,7 @@ class MyApp extends StatelessWidget {
             ProductsPage.routeName: (ctx) => ProductsPage(),
             ProductDetailPage.routeName: (ctx) => ProductDetailPage(),
             CartPage.routeName: (ctx) => CartPage(),
+            OrdersPage.routeName: (ctx) => OrdersPage(),
           },
         ));
   }
